@@ -97,6 +97,11 @@ pub fun main() {
     pixels: serializeStringArray(pixels5)
   )
 
+  log(canvas1.pixels)
+  log(canvas2.pixels)
+  log(canvas3.pixels)
+  log(canvas4.pixels)
+  log(canvas5.pixels)
   let myPrinter <- create Printer()
   let picture1 <- myPrinter.print(canvas: canvas1)
   let picture2 <- myPrinter.print(canvas: canvas2)
