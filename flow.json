@@ -1,21 +1,37 @@
 {
-	"emulators": {
-		"default": {
-			"port": 3569,
-			"serviceAccount": "emulator-account"
-		}
-	},
-	"contracts": {},
-	"networks": {
-		"emulator": "127.0.0.1:3569",
-		"mainnet": "access.mainnet.nodes.onflow.org:9000",
-		"testnet": "access.devnet.nodes.onflow.org:9000"
-	},
-	"accounts": {
-		"emulator-account": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "67e88b2169932731c1db6a03e2cd215fcb9142b46d1f72b6700ed2cc0ccd73f3"
-		}
-	},
-	"deployments": {}
+  "emulators": {
+    "default": {
+      "port": 3569,
+      "serviceAccount": "emulator-account"
+    }
+  },
+  "contracts": {
+    "Artist": "./quests/week1/day3/artist/contract.cdc"
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testnet": "access.devnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "67e88b2169932731c1db6a03e2cd215fcb9142b46d1f72b6700ed2cc0ccd73f3"
+    },
+    "emulator-artist": {
+      "address": "0x01cf0e2f2f715450",
+      "key": {
+        "type": "hex",
+        "index": 0,
+        "signatureAlgorithm": "ECDSA_secp256k1",
+        "hashAlgorithm": "SHA3_256",
+        "privateKey": "806e48ae3a6b7e6bbf6e66c5247f7e904c3ca5d76e127700a4b68d1d5935c87e"
+      }
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-artist": ["Artist"]
+    }
+  }
 }
