@@ -209,7 +209,7 @@ function Provider(props) {
             let collectionRef: &{LocalArtist.PictureReceiver}
 
             prepare(account: AuthAccount) {
-              // TODO: Change to your contract account address.
+              // Change to your contract account address.
               let printerRef = getAccount(${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT})
                 .getCapability<&LocalArtist.Printer>(/public/LocalArtistPicturePrinter)
                 .borrow()
@@ -285,7 +285,7 @@ function Provider(props) {
             let marketRef: &{LocalArtistMarket.MarketInterface}
 
             prepare(account: AuthAccount) {
-              // TODO: Change to your contract account address.
+              // Change to your contract account address.
               self.marketRef = getAccount(${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT})
                 .getCapability(/public/LocalArtistMarket)
                 .borrow<&{LocalArtistMarket.MarketInterface}>()
@@ -327,8 +327,25 @@ function Provider(props) {
           import LocalArtist from ${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT}
           import LocalArtistMarket from ${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT}
 
-          // TODO: Complete this transaction by calling LocalArtistMarket.withdraw().
+          // Complete this transaction by calling LocalArtistMarket.withdraw().
           transaction(listingIndex: Int) {
+
+            let seller: Address
+            let marketRef: &{LocalArtistMarket.MarketInterface}
+
+            prepare(account: AuthAccount) {
+              self.marketRef = getAccount(${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT})
+                .getCapability(/public/LocalArtistMarket)
+                .borrow<&{LocalArtistMarket.MarketInterface}>()
+                ?? panic("Couldn't borrow market reference.")
+            }
+
+              self.seller = account.address
+          }
+
+          execute {
+            self.marketRef.withdraw(istingIndex: listingIndex, seller: self.seller)
+          }
           }
         `,
         fcl.args([
@@ -353,8 +370,34 @@ function Provider(props) {
           import FungibleToken from 0x9a0766d93b6608b7
           import FlowToken from 0x7e60df042a9c0868
 
-          // TODO: Complete this transaction by calling LocalArtistMarket.buy().
+          // Complete this transaction by calling LocalArtistMarket.buy().
           transaction(listingIndex: Int) {
+            let marketRef: &{LocalArtistMarket.MarketInterface}
+            let sentVault: @FungibleToken.Vault
+            let buyer: Address
+
+            prepare(account: AuthAccount) {
+              self.marketRef = getAccount(${process.env.REACT_APP_ARTIST_CONTRACT_HOST_ACCOUNT})
+                .getCapability(/public/LocalArtistMarket)
+                .borrow<&{LocalArtistMarket.MarketInterface}>()
+                ?? panic("Couldn't borrow market reference.")
+
+              let price = self.marketRef.getListings()[listingIndex].price
+
+              let vaultRef = account
+                .borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
+                ?? panic("Could not borrow reference to the owner's Vault!")
+
+              self.sentVault <- vaultRef.withdraw(amount: price)
+
+              self.buyer = account.address
+
+              execute {
+                self.marketRef.buy(listing: listingIndex, with: <- self.sentVault, buyer: self.buyer)
+              }
+            }
+
+
           }
         `,
         fcl.args([
