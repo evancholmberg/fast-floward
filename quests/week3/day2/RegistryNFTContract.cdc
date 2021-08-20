@@ -18,7 +18,7 @@ pub contract RegistryNFTContract: NonFungibleToken, RegistryInterface {
     }
 
     pub resource interface ITenantMinter {
-        access(contract) updateTotalSupply()
+        access(contract) fun updateTotalSupply()
     }
 
     // Tenant
@@ -36,7 +36,7 @@ pub contract RegistryNFTContract: NonFungibleToken, RegistryInterface {
 
         pub var totalSupply: UInt64
 
-        access(contract) updateTotalSupply() {
+        access(contract) fun updateTotalSupply() {
             self.totalSupply = self.totalSupply + (1 as UInt64)
         }
 
